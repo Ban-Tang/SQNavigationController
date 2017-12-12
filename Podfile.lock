@@ -1,0 +1,30 @@
+PODS:
+  - SQKit (1.0):
+    - SQKit/Foundation (= 1.0)
+    - SQKit/Quartz (= 1.0)
+    - SQKit/UIKit (= 1.0)
+  - SQKit/Foundation (1.0)
+  - SQKit/Quartz (1.0)
+  - SQKit/UIKit (1.0):
+    - SQKit/Foundation
+    - SQKit/Quartz
+
+DEPENDENCIES:
+  - SQKit (from `https://git.coding.net/roylee/SQKit.git`, tag `1.0`)
+
+EXTERNAL SOURCES:
+  SQKit:
+    :git: https://git.coding.net/roylee/SQKit.git
+    :tag: 1.0
+
+CHECKOUT OPTIONS:
+  SQKit:
+    :git: https://git.coding.net/roylee/SQKit.git
+    :tag: 1.0
+
+SPEC CHECKSUMS:
+  SQKit: 6687986a5e607cf85ab719e0792941229cf5d1fe
+
+PODFILE CHECKSUM: 1b9bf0a69fc0a6c841139f9541768b385f60bb14
+
+COCOAPODS: 1.3.1

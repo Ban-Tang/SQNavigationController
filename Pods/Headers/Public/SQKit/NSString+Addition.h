@@ -1,0 +1,1 @@
+../../../SQKit/SQKit/Foundation/NSString+Addition.h

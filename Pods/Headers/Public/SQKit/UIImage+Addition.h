@@ -1,0 +1,1 @@
+../../../SQKit/SQKit/UIKit/UIImage+Addition.h
