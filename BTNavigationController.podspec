@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "BTNavigationController"
-  s.version      = "1.0"
+  s.version      = "0.1"
   s.summary      = "A full screen pop gesture navigaiton controller"
   s.homepage     = "https://coding.net/u/roylee/p/BTNavigationController"
 

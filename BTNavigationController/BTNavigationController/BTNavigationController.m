@@ -8,7 +8,6 @@
 
 #import "BTNavigationController.h"
 #import <objc/runtime.h>
-#import <UIView+Addition.h>
 
 @interface BTFullscreenPopGestureRecognizerDelegate : NSObject <UIGestureRecognizerDelegate>
 

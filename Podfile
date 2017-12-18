@@ -3,6 +3,6 @@ platform :ios, '8.0'
 
 target 'BTNavigationController' do
 
-  pod 'SQKit', :git => 'https://git.coding.net/roylee/SQKit.git', :tag => '1.0'
+#  pod 'SQKit', :git => 'https://git.coding.net/roylee/SQKit.git', :tag => '1.0'
 
 end

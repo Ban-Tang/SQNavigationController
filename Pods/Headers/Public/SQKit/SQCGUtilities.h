@@ -1,1 +1,0 @@
-../../../SQKit/SQKit/Quartz/SQCGUtilities.h

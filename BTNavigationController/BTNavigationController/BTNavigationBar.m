@@ -9,6 +9,22 @@
 #import "BTNavigationBar.h"
 #import <objc/runtime.h>
 
+#ifndef iPhoneX
+#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+#endif
+#ifndef kStatusBarHeight
+#define kStatusBarHeight  (iPhoneX ? 44 : 20)
+#endif
+#ifndef kNavigationHeight
+#define kNavigationHeight (kStatusBarHeight + 44)
+#endif
+#ifndef kScreenWidth
+#define kScreenWidth  [UIScreen mainScreen].bounds.size.width
+#endif
+#ifndef kScreenHeight
+#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+#endif
+
 CGFloat const kBarButtonImageTitleInset = 8;
 CGFloat const kBarButtonItemEdgeInset = 15;
 CGFloat const kNavigationBarButtonPadding = 10;
@@ -28,14 +44,12 @@ CGFloat const kBarButtonItemLineSpacing = 15;
 @implementation BTNavigationBar
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    BOOL iPhoneX = ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO);
-    CGFloat status_h = iPhoneX ? 44 : 20;
-    CGFloat nav_h = status_h + 44;
-    frame = CGRectMake(0, 0, frame.size.width, nav_h);
+    frame = CGRectMake(0, 0, frame.size.width, kNavigationHeight);
     self = [super initWithFrame:frame];
     if (self) {
         _leftViews = [NSMutableArray arrayWithCapacity:0];
         _rightViews = [NSMutableArray arrayWithCapacity:0];
+        _tintColor = [UIColor colorWithRed:153 / 255.0 green:153 / 255.0 blue:153 / 255.0 alpha:1];
         [self setupViews];
     }
     return self;
@@ -84,12 +98,15 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     CGFloat right = (_rightViews.firstObject ? CGRectGetMinX(_rightViews.firstObject.frame) : kScreenWidth) - padding;
     right = MIN(CGRectGetWidth(self.frame) - right, 25);
     CGFloat maxW  = kScreenWidth - 2 *MAX(left, right);
-    if (_titleLabel.width >= maxW && maxW > 0) {
-        _titleLabel.width = maxW;
-        _titleLabel.left  = left;
+    CGRect frame = _titleLabel.frame;
+    if (frame.size.width >= maxW && maxW > 0) {
+        frame.size.width = maxW;
+        frame.origin.x   = left;
     }else {
-        _titleLabel.centerX = self.width / 2;
+        // horizontal center.
+        frame.origin.x = (CGRectGetWidth(self.bounds) - CGRectGetWidth(frame)) / 2;
     }
+    _titleLabel.frame = frame;
 }
 
 - (void)layoutBarButtonItems {
@@ -105,13 +122,15 @@ CGFloat const kBarButtonItemLineSpacing = 15;
         // Normal item.
         else {
             UIView *itemView = _leftViews[idx - skipIndex];
-            itemView.left = itemLeft + obj.layoutMargin;
-            itemLeft = itemView.right + kBarButtonItemLineSpacing;
+            CGRect frame = itemView.frame;
+            frame.origin.x = itemLeft + obj.layoutMargin;
+            itemView.frame = frame;
+            itemLeft = CGRectGetMaxX(frame) + kBarButtonItemLineSpacing;
         }
     }];
     
     // right items.
-    __block CGFloat itemRight = self.width - kNavigationBarButtonPadding;
+    __block CGFloat itemRight = CGRectGetWidth(self.bounds) - kNavigationBarButtonPadding;
     __block NSInteger index = _rightViews.count - 1;
     [_rightBarButtonItems enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         // It is a adjust item, if the width is not 0.
@@ -121,8 +140,10 @@ CGFloat const kBarButtonItemLineSpacing = 15;
         // Normal item.
         else {
             UIView *itemView = _rightViews[index];
-            itemView.right = itemRight + obj.layoutMargin;
-            itemRight = itemView.left - kBarButtonItemLineSpacing;
+            CGRect frame = itemView.frame;
+            frame.origin.x = itemRight + obj.layoutMargin - CGRectGetWidth(frame);
+            itemView.frame = frame;
+            itemRight = CGRectGetMinX(frame) - kBarButtonItemLineSpacing;
             index --;
         }
     }];
@@ -134,10 +155,12 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     _title = [title copy];
     _titleLabel.attributedText = [[NSAttributedString alloc] initWithString:title ?: @""
                                                                  attributes:_titleTextAttributes];
-    _titleLabel.width = ceil([title boundingRectWithSize:CGSizeMake(self.width, _titleLabel.height)
-                                                 options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
-                                              attributes:_titleTextAttributes
-                                                 context:nil].size.width);
+    CGRect frame = _titleLabel.frame;
+    frame.size.width = ceil([title boundingRectWithSize:CGSizeMake(self.bounds.size.width, frame.size.height)
+                                                options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
+                                             attributes:_titleTextAttributes
+                                                context:nil].size.width);
+    _titleLabel.frame = frame;
     [self layoutTitleView];
 }
 
@@ -147,7 +170,7 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     }
     _titleView = titleView;
     _titleLabel.hidden = titleView != nil;
-    _titleView.center = CGPointMake(self.width/2, kStatusBarHeight + ceil((kNavigationHeight - kStatusBarHeight)/2));
+    _titleView.center = CGPointMake(CGRectGetWidth(self.bounds) / 2, kStatusBarHeight + ceil((kNavigationHeight - kStatusBarHeight)/2));
     [self addSubview:_titleView];
 }
 
@@ -185,8 +208,7 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     _shadowImage = shadowImage;
     _shadowImageView.hidden = NO;
     _shadowImageView.image = shadowImage;
-    _shadowImageView.height = shadowImage.size.height;
-    _shadowImageView.bottom = kNavigationHeight;
+    _shadowImageView.frame = CGRectMake(0, kNavigationHeight - shadowImage.size.height, CGRectGetWidth(self.bounds), shadowImage.size.height);
 }
 
 - (void)setBarTintColor:(UIColor *)barTintColor {
@@ -205,7 +227,9 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     _leftBarButtonItems = nil;
     _leftBarButtonItem = leftBarButtonItem;
     UIView *itemView = [self barItemViewFromBarButtonItem:leftBarButtonItem];
-    itemView.left = kNavigationBarButtonPadding + leftBarButtonItem.layoutMargin;
+    CGRect frame = itemView.frame;
+    frame.origin.x = kNavigationBarButtonPadding + leftBarButtonItem.layoutMargin;
+    itemView.frame = frame;
     
     [self addSubview:itemView];
     [_leftViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -219,7 +243,9 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     _rightBarButtonItems = nil;
     _rightBarButtonItem = rightBarButtonItem;
     UIView *itemView = [self barItemViewFromBarButtonItem:rightBarButtonItem];
-    itemView.right = self.width - kNavigationBarButtonPadding + rightBarButtonItem.layoutMargin;
+    CGRect frame = itemView.frame;
+    frame.origin.x = CGRectGetWidth(self.bounds) - kNavigationBarButtonPadding + rightBarButtonItem.layoutMargin - CGRectGetWidth(frame);
+    itemView.frame = frame;
     
     [self addSubview:itemView];
     [_rightViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
@@ -247,12 +273,14 @@ CGFloat const kBarButtonItemLineSpacing = 15;
         // Normal item.
         else {
             UIView *itemView = [self barItemViewFromBarButtonItem:obj];
-            itemView.left = left + obj.layoutMargin;
+            CGRect frame = itemView.frame;
+            frame.origin.x = left + obj.layoutMargin;
+            itemView.frame = frame;
             
             [self addSubview:itemView];
             [_leftViews addObject:itemView];
             
-            left = itemView.right + kBarButtonItemLineSpacing;
+            left = CGRectGetMaxX(frame) + kBarButtonItemLineSpacing;
         }
     }];
 }
@@ -263,7 +291,7 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     }
     self.rightBarButtonItem = nil;
     _rightBarButtonItems = rightBarButtonItems;
-    __block CGFloat right = self.width - kNavigationBarButtonPadding;
+    __block CGFloat right = CGRectGetWidth(self.bounds) - kNavigationBarButtonPadding;
     
     [_rightViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_rightViews removeAllObjects];
@@ -275,12 +303,14 @@ CGFloat const kBarButtonItemLineSpacing = 15;
         // Normal item.
         else {
             UIView *itemView = [self barItemViewFromBarButtonItem:obj];
-            itemView.right = right + obj.layoutMargin;
+            CGRect frame = itemView.frame;
+            frame.origin.x = right + obj.layoutMargin - CGRectGetWidth(frame);
+            itemView.frame = frame;
             
             [self addSubview:itemView];
             [_rightViews insertObject:itemView atIndex:0];
             
-            right = itemView.left - kBarButtonItemLineSpacing;
+            right = CGRectGetMinX(frame) - kBarButtonItemLineSpacing;
         }
     }];
 }
@@ -300,19 +330,18 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     }
     
     UIButton *itemView = [UIButton buttonWithType:UIButtonTypeCustom];
-    itemView.titleLabel.font = FONT(14);
+    itemView.titleLabel.font = [UIFont systemFontOfSize:14];
     if (item.title && item.image) {
         itemView.titleEdgeInsets = UIEdgeInsetsMake(0, item.titleImageInset, 0, 0);
         itemView.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, item.titleImageInset);
     }
-    [itemView setTitleColor:kColorContentText forState:UIControlStateNormal];
+    [itemView setTitleColor:_tintColor forState:UIControlStateNormal];
     [itemView setTitle:item.title forState:UIControlStateNormal];
     [itemView setImage:item.image forState:UIControlStateNormal];
     [itemView setImage:item.image forState:UIControlStateHighlighted];
     [itemView sizeToFit];
-    itemView.top = kStatusBarHeight;
-    itemView.height = kNavigationHeight - kStatusBarHeight;
-    itemView.width += (item.title && item.image) ? item.titleImageInset : 0 + 2 *item.itemEdgeInset;
+    CGFloat width = CGRectGetWidth(itemView.frame) + ((item.title && item.image) ? item.titleImageInset : 0 + 2 *item.itemEdgeInset);
+    [itemView setFrame:CGRectMake(0, kStatusBarHeight, width, kNavigationHeight - kStatusBarHeight)];
     [itemView addTarget:item.target action:item.action forControlEvents:UIControlEventTouchUpInside];
     return itemView;
 }

@@ -1,1 +1,0 @@
-../../../SQKit/SQKit/UIKit/UIDevice+Addition.h
