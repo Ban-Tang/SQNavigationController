@@ -1,14 +1,16 @@
 //
-//  BTNavigationController.h
-//  BTNavigationController
+//  SQNavigationController.h
+//  SQNavigationController
 //
 //  Created by roylee on 2017/12/11.
 //  Copyright © 2017年 bantang. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import "SQNavigationBar.h"
+#import "SQNavigationItem.h"
 
-@interface BTNavigationController : UINavigationController
+@interface SQNavigationController : UINavigationController
 
 /// A full screen pan gesturerecognizer instead of the system's interactivePopGestureRecognizer.
 @property (nonatomic, readonly) UIPanGestureRecognizer *fullScreenPopGestureRecognizer;
@@ -19,7 +21,14 @@
 /// is whole effect of the navigation controller.
 @property (nonatomic, assign) BOOL interactivePopDisabled;
 
+/// Indicate whether use system `UINavigationBar` or not. If not every view controller
+/// will be added a custom navigation bar.
+/// 
+/// Default is NO.
+@property (nonatomic, assign) BOOL useSystemNavigationBar;
+
 @end
+
 
 
 @interface UIViewController (FullScreenPopGestureRecognizer)
@@ -40,3 +49,6 @@
 - (void)requireFullScreenPopGestureRecognizerFailed:(UIGestureRecognizer *)gestureRecoginzer;
 
 @end
+
+
+

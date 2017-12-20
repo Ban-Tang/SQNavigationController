@@ -1,36 +1,20 @@
 //
-//  BTNavigationBar.m
-//  BTNavigationController
+//  SQNavigationBar.m
+//  SQNavigationController
 //
 //  Created by roylee on 2017/12/11.
 //  Copyright © 2017年 bantang. All rights reserved.
 //
 
-#import "BTNavigationBar.h"
+#import "SQNavigationBar.h"
 #import <objc/runtime.h>
-
-#ifndef iPhoneX
-#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
-#endif
-#ifndef kStatusBarHeight
-#define kStatusBarHeight  (iPhoneX ? 44 : 20)
-#endif
-#ifndef kNavigationHeight
-#define kNavigationHeight (kStatusBarHeight + 44)
-#endif
-#ifndef kScreenWidth
-#define kScreenWidth  [UIScreen mainScreen].bounds.size.width
-#endif
-#ifndef kScreenHeight
-#define kScreenHeight [UIScreen mainScreen].bounds.size.height
-#endif
 
 CGFloat const kBarButtonImageTitleInset = 8;
 CGFloat const kBarButtonItemEdgeInset = 15;
 CGFloat const kNavigationBarButtonPadding = 10;
 CGFloat const kBarButtonItemLineSpacing = 15;
 
-@interface BTNavigationBar ()
+@interface SQNavigationBar ()
 
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) NSMutableArray <UIView *>*leftViews;
@@ -41,7 +25,18 @@ CGFloat const kBarButtonItemLineSpacing = 15;
 
 @end
 
-@implementation BTNavigationBar
+@implementation SQNavigationBar
+
++ (SQNavigationBar *)navigationBar {
+    SQNavigationBar *navigationBar = [[SQNavigationBar alloc] initWithFrame:CGRectMake(0, 0, kScreenWidth, 0)];
+    navigationBar.barTintColor = [UIColor whiteColor];
+    navigationBar.tintColor = [UIColor colorWithRed:153 / 255.0 green:153 / 255.0 blue:153 / 255.0 alpha:1];
+    UIColor *titleColor = [UIColor colorWithRed:102.0 / 255 green:102.0 / 255 blue:102.0 / 255 alpha:1];
+    NSDictionary *attributes = @{NSForegroundColorAttributeName : titleColor,
+                                 NSFontAttributeName : [UIFont systemFontOfSize:16]};
+    navigationBar.titleTextAttributes = attributes;
+    return navigationBar;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame {
     frame = CGRectMake(0, 0, frame.size.width, kNavigationHeight);
@@ -63,7 +58,7 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     
     // title.
     self.titleLabel = [UILabel new];
-    _titleLabel.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), 44);
+    _titleLabel.frame = CGRectMake(0, kStatusBarHeight, CGRectGetWidth(self.frame), 44);
     _titleLabel.font = [UIFont systemFontOfSize:15];
     _titleLabel.textColor = [UIColor blackColor];
     _titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -74,7 +69,6 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     self.shadowImageView = [[UIImageView alloc] initWithImage:nil];
     _shadowImageView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     _shadowImageView.backgroundColor = [UIColor colorWithRed:238.0/ 255 green:238.0/ 255 blue:238.0/ 255 alpha:1];
-    _shadowImageView.frame = CGRectMake(0, CGRectGetMaxX(self.frame), CGRectGetWidth(self.frame), _shadowImageView.image ? _shadowImageView.image.size.height : 0.5);
     
     [self addSubview:_backgroundView];
     [self addSubview:_titleLabel];
@@ -89,6 +83,9 @@ CGFloat const kBarButtonItemLineSpacing = 15;
     
     // layout bar button items.
     [self layoutBarButtonItems];
+    
+    // layout bottom line.
+    [self layoutBottomLine];
 }
 
 - (void)layoutTitleView {
@@ -147,6 +144,11 @@ CGFloat const kBarButtonItemLineSpacing = 15;
             index --;
         }
     }];
+}
+
+- (void)layoutBottomLine {
+    CGFloat lineHeight = _shadowImageView.image ? _shadowImageView.image.size.height : 0.5;
+    _shadowImageView.frame = CGRectMake(0, CGRectGetHeight(self.bounds) - lineHeight, self.bounds.size.width, lineHeight);
 }
 
 #pragma mark - Setter
@@ -351,7 +353,7 @@ CGFloat const kBarButtonItemLineSpacing = 15;
 
 
 
-@implementation BTNavigationBar (Alpha)
+@implementation SQNavigationBar (Alpha)
 
 - (void)setElementAlpa:(CGFloat)elementAlpa {
     [self willChangeValueForKey:@"_elementAlpa"];
@@ -429,3 +431,53 @@ CGFloat const kBarButtonItemLineSpacing = 15;
 }
 
 @end
+
+
+
+
+
+@implementation UIViewController (SQNavigationBar)
+
+// Lazy load a custom navigation bar.
+- (SQNavigationBar *)navigationBar {
+    SQNavigationBar *navigationBar = objc_getAssociatedObject(self, _cmd);
+    if (navigationBar == nil) {
+        navigationBar = (self.navigationBar = [SQNavigationBar navigationBar]);
+    }
+    return navigationBar;
+}
+
+- (void)setNavigationBar:(SQNavigationBar *)navigationBar {
+    objc_setAssociatedObject(self, @selector(navigationBar), navigationBar, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)isNavigationBarHidden {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (void)setNavigationBarHidden:(BOOL)navigationBarHidden {
+    [self setNavigationBarHidden:navigationBarHidden animated:NO];
+}
+
+- (void)setNavigationBarHidden:(BOOL)hidden animated:(BOOL)animated {
+    if (!animated) {
+        objc_setAssociatedObject(self, @selector(isNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        self.navigationBar.hidden = hidden;
+    }else {
+        CGFloat top = hidden ? -self.navigationBar.frame.size.height : 0;
+        self.navigationBar.hidden = NO;
+        
+        [UIView animateWithDuration:UINavigationControllerHideShowBarDuration animations:^{
+            CGRect frame = self.navigationBar.frame;
+            frame.origin.y = top;
+            self.navigationBar.frame = frame;
+        } completion:^(BOOL finished) {
+            objc_setAssociatedObject(self, @selector(isNavigationBarHidden), @(hidden), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            self.navigationBar.hidden = hidden;
+        }];
+    }
+}
+
+@end
+
+

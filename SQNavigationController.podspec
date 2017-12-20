@@ -1,5 +1,5 @@
 #
-#  Be sure to run `pod spec lint BTNavigationController.podspec' to ensure this is a
+#  Be sure to run `pod spec lint SQNavigationController.podspec' to ensure this is a
 #  valid spec and to remove all comments including this before submitting the spec.
 #
 #  To learn more about Podspec attributes see http://docs.cocoapods.org/specification.html
@@ -15,10 +15,10 @@ Pod::Spec.new do |s|
   #  summary should be tweet-length, and the description more in depth.
   #
 
-  s.name         = "BTNavigationController"
+  s.name         = "SQNavigationController"
   s.version      = "0.1"
   s.summary      = "A full screen pop gesture navigaiton controller"
-  s.homepage     = "https://coding.net/u/roylee/p/BTNavigationController"
+  s.homepage     = "https://coding.net/u/roylee/p/SQNavigationController"
 
   s.license      = "MIT"
   s.license      = { :type => "MIT", :file => "LICENSE" }
@@ -27,7 +27,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "8.0"
 
   s.source       = { 
-    :git => "https://git.coding.net/roylee/BTNavigationController.git", 
+    :git => "https://git.coding.net/roylee/SQNavigationController.git", 
     :tag => "#{s.version}" 
   }
   s.source_files  = "Classes", "Classes/**/*.{h,m}"

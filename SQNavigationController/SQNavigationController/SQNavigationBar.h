@@ -1,6 +1,6 @@
 //
-//  BTNavigationBar.h
-//  BTNavigationController
+//  SQNavigationBar.h
+//  SQNavigationController
 //
 //  Created by roylee on 2017/12/11.
 //  Copyright © 2017年 bantang. All rights reserved.
@@ -19,7 +19,7 @@ UIKIT_EXTERN CGFloat const kNavigationBarButtonPadding;
 /// Line spacing between two bar button item. Default is 15.
 UIKIT_EXTERN CGFloat const kBarButtonItemLineSpacing;
 
-@interface BTNavigationBar : UIView
+@interface SQNavigationBar : UIView
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, readonly) UIView *backgroundView;
@@ -40,7 +40,7 @@ UIKIT_EXTERN CGFloat const kBarButtonItemLineSpacing;
 
 
 
-@interface BTNavigationBar (Alpha)
+@interface SQNavigationBar (Alpha)
 
 @property (nonatomic, assign) CGFloat elementAlpa;
 
@@ -59,3 +59,35 @@ UIKIT_EXTERN CGFloat const kBarButtonItemLineSpacing;
 @property (nonatomic, assign) CGFloat itemEdgeInset; //!< edge of the item, just like `kBarButtonItemEdgeInset`.
 
 @end
+
+
+
+@interface UIViewController (BTNavigaitonBar)
+
+@property (nonatomic, readonly) SQNavigationBar *navigationBar;
+@property (nonatomic, getter=isNavigationBarHidden) BOOL navigationBarHidden;
+
+- (void)setNavigationBarHidden:(BOOL)hidden animated:(BOOL)animated;
+
+@end
+
+
+#ifndef iPhoneX
+#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
+#endif
+
+#ifndef kStatusBarHeight
+#define kStatusBarHeight  (iPhoneX ? 44 : 20)
+#endif
+
+#ifndef kNavigationHeight
+#define kNavigationHeight (kStatusBarHeight + 44)
+#endif
+
+#ifndef kScreenWidth
+#define kScreenWidth  [UIScreen mainScreen].bounds.size.width
+#endif
+
+#ifndef kScreenHeight
+#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+#endif
