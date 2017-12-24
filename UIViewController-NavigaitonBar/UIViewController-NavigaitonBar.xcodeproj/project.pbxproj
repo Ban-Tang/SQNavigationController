@@ -298,7 +298,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 865L62UDE9;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../SQNavigationController/**";
 				INFOPLIST_FILE = "UIViewController-NavigaitonBar/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jzyd.UIViewController-NavigaitonBar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -312,7 +314,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 865L62UDE9;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/../SQNavigationController/**";
 				INFOPLIST_FILE = "UIViewController-NavigaitonBar/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jzyd.UIViewController-NavigaitonBar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
