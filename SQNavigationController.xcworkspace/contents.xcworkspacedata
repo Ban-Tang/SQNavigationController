@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:UIViewController-NavigaitonBar/UIViewController-NavigaitonBar.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SQNavigationController.xcodeproj">
    </FileRef>
    <FileRef

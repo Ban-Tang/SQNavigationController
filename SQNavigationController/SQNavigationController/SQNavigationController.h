@@ -7,8 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SQNavigationBar.h"
-#import "SQNavigationItem.h"
 
 @interface SQNavigationController : UINavigationController
 
@@ -26,6 +24,17 @@
 /// 
 /// Default is NO.
 @property (nonatomic, assign) BOOL useSystemNavigationBar;
+
+
+#pragma mark - Appearance Property
+///=============================================================================
+/// @name Appearance Property
+///=============================================================================
+
+/// Custom the back bar button for the navigation bar. It support uiappearance.
+///
+/// This back bar button item will be effect when the top view controller has no back button
+@property (nonatomic, strong) UIBarButtonItem *globalBackBarButtonItem UI_APPEARANCE_SELECTOR;
 
 @end
 
@@ -49,6 +58,7 @@
 - (void)requireFullScreenPopGestureRecognizerFailed:(UIGestureRecognizer *)gestureRecoginzer;
 
 @end
+
 
 
 

@@ -3,28 +3,39 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7DC50A8F1FEFB3AE006374B2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
 		BB8BC7903C18C9A352947CB28190487A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
 		E5C5D85EFC1F804140275C4F1CC659E6 /* Pods-SQNavigationController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E1B429259A6748CF3B4D671D33C2B9B2 /* Pods-SQNavigationController-dummy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		107A919A7FFFFA2661040C99D7E34B61 /* libPods-SQNavigationController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-SQNavigationController.a"; path = "libPods-SQNavigationController.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		107A919A7FFFFA2661040C99D7E34B61 /* libPods-SQNavigationController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SQNavigationController.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		155D4BBD3DD0B46E4728F9325A3D4CE1 /* Pods-SQNavigationController.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SQNavigationController.release.xcconfig"; sourceTree = "<group>"; };
 		265C511B9793692630A0B5F0EA6BFEC4 /* Pods-SQNavigationController.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-SQNavigationController.debug.xcconfig"; sourceTree = "<group>"; };
 		31EE7259AC38DAE81493755AE3DCABB2 /* Pods-SQNavigationController-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-SQNavigationController-acknowledgements.plist"; sourceTree = "<group>"; };
 		6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		7DC50A931FEFB3AE006374B2 /* libPods-UIViewController-NavigationBar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-UIViewController-NavigationBar.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		943753DCBD613A35894BA87BE72E96E4 /* Pods-SQNavigationController-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SQNavigationController-frameworks.sh"; sourceTree = "<group>"; };
 		C99928D84BD7E50A375A21E351E03068 /* Pods-SQNavigationController-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-SQNavigationController-acknowledgements.markdown"; sourceTree = "<group>"; };
+		D7341487CA5F94EA1023743295D35657 /* RevealServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RevealServer.framework; path = "RevealServer-11/iOS/RevealServer.framework"; sourceTree = "<group>"; };
 		E1B429259A6748CF3B4D671D33C2B9B2 /* Pods-SQNavigationController-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-SQNavigationController-dummy.m"; sourceTree = "<group>"; };
 		F87FC1F4B9515763D2BBB3E208DECE71 /* Pods-SQNavigationController-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-SQNavigationController-resources.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		7DC50A8E1FEFB3AE006374B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7DC50A8F1FEFB3AE006374B2 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C44DEFD9ECAE352CF122F3773BF460D8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -40,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				107A919A7FFFFA2661040C99D7E34B61 /* libPods-SQNavigationController.a */,
+				7DC50A931FEFB3AE006374B2 /* libPods-UIViewController-NavigationBar.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -49,9 +61,26 @@
 			children = (
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
 				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				9B6766349D399265AA26ED6C7E8D5333 /* Pods */,
 				01ADE787945D48FC568AC4C09912265B /* Products */,
 				F87BBABB9190F78C3089DEBBD14A76B0 /* Targets Support Files */,
 			);
+			sourceTree = "<group>";
+		};
+		8A41102086806AD024D447E412C9A91B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D7341487CA5F94EA1023743295D35657 /* RevealServer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9B6766349D399265AA26ED6C7E8D5333 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E853FEE7349B6E1788A524CC074AEEB0 /* Reveal-SDK */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
@@ -68,6 +97,14 @@
 				6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */,
 			);
 			name = iOS;
+			sourceTree = "<group>";
+		};
+		E853FEE7349B6E1788A524CC074AEEB0 /* Reveal-SDK */ = {
+			isa = PBXGroup;
+			children = (
+				8A41102086806AD024D447E412C9A91B /* Frameworks */,
+			);
+			path = "Reveal-SDK";
 			sourceTree = "<group>";
 		};
 		F87BBABB9190F78C3089DEBBD14A76B0 /* Targets Support Files */ = {
@@ -96,6 +133,22 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		7DC50A8B1FEFB3AE006374B2 /* Pods-UIViewController-NavigationBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7DC50A901FEFB3AE006374B2 /* Build configuration list for PBXNativeTarget "Pods-UIViewController-NavigationBar" */;
+			buildPhases = (
+				7DC50A8C1FEFB3AE006374B2 /* Sources */,
+				7DC50A8E1FEFB3AE006374B2 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Pods-UIViewController-NavigationBar";
+			productName = "Pods-SQNavigationController";
+			productReference = 7DC50A931FEFB3AE006374B2 /* libPods-UIViewController-NavigationBar.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		C578378EC2C0C1DF70CCC2152A3EAB5D /* Pods-SQNavigationController */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8DAC3B2D54523C5635120622E7C5C8A9 /* Build configuration list for PBXNativeTarget "Pods-SQNavigationController" */;
@@ -134,11 +187,19 @@
 			projectRoot = "";
 			targets = (
 				C578378EC2C0C1DF70CCC2152A3EAB5D /* Pods-SQNavigationController */,
+				7DC50A8B1FEFB3AE006374B2 /* Pods-UIViewController-NavigationBar */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		7DC50A8C1FEFB3AE006374B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC8EC4A40266D07F23FE272FB3A3869D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -266,6 +327,52 @@
 			};
 			name = Release;
 		};
+		7DC50A911FEFB3AE006374B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 265C511B9793692630A0B5F0EA6BFEC4 /* Pods-SQNavigationController.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		7DC50A921FEFB3AE006374B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 155D4BBD3DD0B46E4728F9325A3D4CE1 /* Pods-SQNavigationController.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MACH_O_TYPE = staticlib;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		E2C8AD155211AC47F964031AC513D741 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 155D4BBD3DD0B46E4728F9325A3D4CE1 /* Pods-SQNavigationController.release.xcconfig */;
@@ -297,6 +404,15 @@
 			buildConfigurations = (
 				1C7D17A37D091C98D2F0DD886C3A9320 /* Debug */,
 				34FE9531DA9AF2820790339988D5FF41 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7DC50A901FEFB3AE006374B2 /* Build configuration list for PBXNativeTarget "Pods-UIViewController-NavigationBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7DC50A911FEFB3AE006374B2 /* Debug */,
+				7DC50A921FEFB3AE006374B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -30,11 +30,11 @@ Pod::Spec.new do |s|
     :git => "https://git.coding.net/roylee/SQNavigationController.git", 
     :tag => "#{s.version}" 
   }
-  s.source_files  = "Classes", "Classes/**/*.{h,m}"
-  s.public_header_files = "Classes/**/*.h"
+  s.source_files  = "SQNavigationController/SQNavigationController/**/*.{h,m}"
+s.public_header_files = "SQNavigationController/SQNavigationController/SQNavigation{Controller,Bar}.h"
 
   s.requires_arc = true
 
-  s.dependency 'SQKit', :git => 'https://git.coding.net/roylee/SQKit.git', :tag => '1.0'
+  # s.dependency 'SQKit', :git => 'https://git.coding.net/roylee/SQKit.git', :tag => '1.0'
 
 end

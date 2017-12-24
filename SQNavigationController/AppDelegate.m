@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "SQNavigationController.h"
 
 @interface AppDelegate ()
 

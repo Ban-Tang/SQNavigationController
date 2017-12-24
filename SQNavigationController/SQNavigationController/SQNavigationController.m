@@ -10,6 +10,8 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 #import "SQNavigationItem.h"
+#import "SQNavigationBar.h"
+#import "SQAppearanceProxy.h"
 
 /// Simple method wihtout object swizzle for layout methods.
 static inline void SQSwizzleMethodUsingBlock(Class class, SEL originalSelector, BOOL shouldReturn, void(^block)(id receiver, id result)) {
@@ -53,6 +55,18 @@ static inline void SQSwizzleMethodUsingBlock(Class class, SEL originalSelector, 
     
     const char *typeEncoding = method_getTypeEncoding(originalMethod);
     class_replaceMethod(class, originalSelector, imp_implementationWithBlock(newInvocation), typeEncoding);
+}
+
+static inline NSArray <Class>*SQNavigationBarBlackList() {
+    static dispatch_once_t onceToken;
+    static NSArray <Class>*blackList;
+    dispatch_once(&onceToken, ^{
+        blackList = @[[UINavigationController class],
+                      [UITableViewController class],
+                      [UITabBarController class],
+                      ];
+    });
+    return blackList;
 }
 
 
@@ -111,7 +125,239 @@ static inline void SQSwizzleMethodUsingBlock(Class class, SEL originalSelector, 
 @interface SQNavigationControllerProxy : NSObject<UINavigationControllerDelegate> {
     __weak id _delegate;
 }
+- (instancetype)initWithDelegate:(id<UINavigationControllerDelegate>)delegate;
 @end
+
+@interface UIViewController (SQNavigationControllerSwizzle)
++ (void)sq_swizzleMethods;
+@end
+
+
+
+@interface SQNavigationController ()<UIGestureRecognizerDelegate, UIAppearanceContainer, UIAppearance>
+    
+@property (nonatomic, strong) SQNavigationControllerProxy *proxy;
+@property (nonatomic, strong) UIPanGestureRecognizer *fullScreenPopGestureRecognizer;
+@property (nonatomic, strong) BTFullscreenPopGestureRecognizerDelegate *popGestureRecognizerDelegate;
+@property (nonatomic, strong) NSMapTable *hiddenNavigationBarMap;
+@property (nonatomic, strong) UIViewController *lastestViewControllerCalledNavigationController;
+
+@end
+
+@implementation SQNavigationController
+
+/// Not use `+ load` if can use `+ initialize`.
++ (void)initialize {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [UIViewController sq_swizzleMethods];
+    });
+}
+
+- (instancetype)initWithRootViewController:(UIViewController *)rootViewController {
+    self = [super initWithRootViewController:rootViewController];
+    if (self) {
+        [self sq_setupAppearance];
+        [self sq_wrapNavigationItemForViewController:self.viewControllers.firstObject];
+    }
+    return self;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self sq_setupAppearance];
+        [self sq_wrapNavigationItemForViewController:self.viewControllers.firstObject];
+    }
+    return self;
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    
+    // Get the system edge gesture target
+    id target = self.interactivePopGestureRecognizer.delegate;
+    
+    // Create the full screen gesture recognizer delegate.
+    self.popGestureRecognizerDelegate = [[BTFullscreenPopGestureRecognizerDelegate alloc] init];
+    _popGestureRecognizerDelegate.navigationController = self;
+    
+    // Create new pan gesture recognizer. "handleNavigationTransition:" is system gesture action.
+    self.fullScreenPopGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:target action:NSSelectorFromString(@"handleNavigationTransition:")];
+    _fullScreenPopGestureRecognizer.delegate = _popGestureRecognizerDelegate;
+    
+    // Add the full screen gesture recognizer.
+    [self.view addGestureRecognizer:_fullScreenPopGestureRecognizer];
+    
+    // Disable system interactive gesture recognizer.
+    self.interactivePopGestureRecognizer.enabled = NO;
+    
+    if (!_useSystemNavigationBar) {
+        // Default hidden the navigation bar.
+        [super setNavigationBarHidden:YES animated:NO];
+        
+        // Reset delegate to proxy.
+        self.proxy = [[SQNavigationControllerProxy alloc] initWithDelegate:nil];
+        super.delegate = _proxy;
+    }
+    
+    if (@available(iOS 11.0, *)) {
+        self.additionalSafeAreaInsets = UIEdgeInsetsMake(-(iPhoneX ? 44 : 20), 0, 0, 0);
+    }
+}
+
+#pragma mark - Override
+
+// Intercept the delegate methods.
+- (void)setDelegate:(id<UINavigationControllerDelegate>)delegate {
+    if (_useSystemNavigationBar) {
+        [super setDelegate:delegate];
+    }else {
+        // The delegate caches whether the delegate responds to some of the delegate
+        // methods, so we need to force it to re-evaluate if the delegate responds to them
+        super.delegate = nil;
+        
+        self.proxy = [[SQNavigationControllerProxy alloc] initWithDelegate:delegate];
+        super.delegate = self.proxy;
+    }
+}
+
+// Override the method to handle the navigation bar of current viewcontroller.
+- (void)setNavigationBarHidden:(BOOL)navigationBarHidden {
+    if (_useSystemNavigationBar) {
+        [super setNavigationBarHidden:navigationBarHidden];
+    }else {
+        [self.lastestViewControllerCalledNavigationController setNavigationBarHidden:navigationBarHidden];
+    }
+}
+
+- (void)setNavigationBarHidden:(BOOL)hidden animated:(BOOL)animated {
+    if (_useSystemNavigationBar) {
+        [super setNavigationBarHidden:hidden animated:animated];
+    }else {
+        [self.lastestViewControllerCalledNavigationController setNavigationBarHidden:hidden animated:animated];
+    }
+}
+
+- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    // Replace the navigationItem of this viewController.
+    [self sq_wrapNavigationItemForViewController:viewController];
+    
+    // Push the view controller.
+    [super pushViewController:viewController animated:animated];
+    
+    // Add a back bar button item for every view controller.
+    [self sq_wrapBackBarButtonItemForViewController:viewController];
+    
+    // Add the custom navigation bar after push action.
+    [self sq_wrapNavigationBarForViewController:viewController];
+}
+
+#pragma mark -
+
+- (void)back:(id)sender {
+    [self popViewControllerAnimated:YES];
+}
+
+- (void)sq_wrapNavigationItemForViewController:(UIViewController *)viewController {
+    if (_useSystemNavigationBar) return;
+    if (!viewController) {
+        return;
+    }
+    
+    // If the root vc is a tabbar, replace the system navigation item to every
+    // child view controller, not init navigation bar here (for vc life cycle).
+    if ([viewController isKindOfClass:[UITabBarController class]]) {
+        for (UIViewController *vc in [(id)viewController viewControllers]) {
+            [vc replaceNavigationItem];
+        }
+    }else {
+        [viewController replaceNavigationItem];
+    }
+}
+
+- (void)sq_wrapNavigationBarForViewController:(UIViewController *)viewController {
+    if (_useSystemNavigationBar) return;
+    
+    if ([viewController isKindOfClass:[UITabBarController class]]) {
+        for (UIViewController *vc in [(id)viewController viewControllers]) {
+            [vc setupNavigationBar];
+        }
+    }else {
+        [viewController setupNavigationBar];
+    }
+}
+
+- (void)sq_wrapBackBarButtonItemForViewController:(UIViewController *)viewController {
+    if (_useSystemNavigationBar) return;
+    
+    UIBarButtonItem *backBarButtonItem = self.globalBackBarButtonItem;
+    if (!backBarButtonItem && !viewController.navigationItem.backBarButtonItem) {
+        backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:self action:NSSelectorFromString(@"back:")];
+    }
+    viewController.navigationItem.backBarButtonItem = backBarButtonItem;
+}
+
+- (void)sq_warpBackButtonForViewController:(UIViewController *)viewController {
+    if ([viewController isKindOfClass:[UITabBarController class]]) {
+        for (UIViewController *vc in [(id)viewController viewControllers]) {
+            [self sq_addBackButtonToViewController:vc];
+        }
+    }else {
+        [self sq_addBackButtonToViewController:viewController];
+    }
+}
+
+- (void)sq_addBackButtonToViewController:(UIViewController *)viewController {
+    SQNavigationBar *navigationBar = viewController.navigationBar;
+    if (!navigationBar) return;
+    
+    SQNavigationItem *navigationItem = (SQNavigationItem *)viewController.navigationItem;
+    if (!navigationItem.hidesBackButton && !navigationItem.leftBarButtonItem && !navigationItem.leftBarButtonItems) {
+        UIViewController *lastViewController = self.viewControllers[self.viewControllers.count - 2];
+        navigationBar.leftBarButtonItem = lastViewController.navigationItem.backBarButtonItem;
+    }
+}
+
+#pragma mark - UIAppearance
+
++ (instancetype)appearance {
+    return [SQAppearanceProxy appearanceForClass:[self class]];
+}
+
++ (nonnull instancetype)appearanceForTraitCollection:(nonnull UITraitCollection *)trait {
+    return nil;
+}
+
++ (nonnull instancetype)appearanceForTraitCollection:(nonnull UITraitCollection *)trait whenContainedIn:(nullable Class<UIAppearanceContainer>)ContainerClass, ... {
+    return nil;
+}
+
++ (nonnull instancetype)appearanceWhenContainedIn:(nullable Class<UIAppearanceContainer>)ContainerClass, ... {
+    return nil;
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
+
+@end
+
+
+
 
 @implementation SQNavigationControllerProxy
 
@@ -156,25 +402,27 @@ static inline void SQSwizzleMethodUsingBlock(Class class, SEL originalSelector, 
 
 #pragma mark - UINavigationControllerDelegate
 
-- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+- (void)navigationController:(SQNavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     NSAssert(![viewController isKindOfClass:[UITableViewController class]], @"SQNavigationController does not support UITableViewController.");
     
     // Disable scroll view inset adjust.
     viewController.edgesForExtendedLayout = UIRectEdgeNone;
     viewController.automaticallyAdjustsScrollViewInsets = NO;
     
-    // Add a back button if need.
-    SQNavigationBar *navigationBar = viewController.navigationBar;
-    if (navigationController.viewControllers.count > 1) {
-        SQNavigationItem *navigationItem = (SQNavigationItem *)viewController.navigationItem;
-        if (!navigationItem.hidesBackButton) {
-            navigationBar.leftBarButtonItem = navigationItem.backBarButtonItem;
-        }
+    // Add a back bar button item for root view controller, cause the push method will
+    // not be invoked when create the navigation controller by nib.
+    if (!viewController.navigationItem.backBarButtonItem) {
+        [navigationController sq_wrapBackBarButtonItemForViewController:viewController];
     }
     
-    // Add the custom navigation bar.
-    if (![viewController.navigationBar isDescendantOfView:viewController.view]) {
-        [viewController.view addSubview:viewController.navigationBar];
+    // Add the custom navigation bar to the root view controller.
+    if ([navigationController.viewControllers count] == 1 && ![viewController.navigationBar isDescendantOfView:viewController.view]) {
+        [navigationController sq_wrapNavigationBarForViewController:viewController];
+    }
+    
+    // Add a back button to the top stack view controller if need.
+    if ([navigationController.viewControllers count] > 1) {
+        [navigationController sq_warpBackButtonForViewController:viewController];
     }
     
     if ([_delegate respondsToSelector:_cmd]) {
@@ -184,143 +432,6 @@ static inline void SQSwizzleMethodUsingBlock(Class class, SEL originalSelector, 
 
 @end
 
-
-
-
-
-@interface UIViewController (SQNavigationControllerSwizzle)
-+ (void)swizzleMethods;
-@end
-
-
-
-@interface SQNavigationController ()<UIGestureRecognizerDelegate>
-    
-@property (nonatomic, strong) SQNavigationControllerProxy *proxy;
-@property (nonatomic, strong) UIPanGestureRecognizer *fullScreenPopGestureRecognizer;
-@property (nonatomic, strong) BTFullscreenPopGestureRecognizerDelegate *popGestureRecognizerDelegate;
-@property (nonatomic, strong) NSMapTable *hiddenNavigationBarMap;
-@property (nonatomic, strong) UIViewController *lastestViewControllerCalledNavigationController;
-
-@end
-
-@implementation SQNavigationController
-
-/// Not use `+ load` if can use `+ initialize`.
-+ (void)initialize {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [UIViewController swizzleMethods];
-    });
-}
-
-- (instancetype)initWithRootViewController:(UIViewController *)rootViewController {
-    self = [super initWithRootViewController:rootViewController];
-    if (self) {
-        [self.viewControllers.firstObject replaceNavigationItem];
-    }
-    return self;
-}
-
-- (instancetype)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        [self.viewControllers.firstObject replaceNavigationItem];
-    }
-    return self;
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
-    // Get the system edge gesture target
-    id target = self.interactivePopGestureRecognizer.delegate;
-    
-    // Create the full screen gesture recognizer delegate.
-    self.popGestureRecognizerDelegate = [[BTFullscreenPopGestureRecognizerDelegate alloc] init];
-    _popGestureRecognizerDelegate.navigationController = self;
-    
-    // Create new pan gesture recognizer. "handleNavigationTransition:" is system gesture action.
-    self.fullScreenPopGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:target action:NSSelectorFromString(@"handleNavigationTransition:")];
-    _fullScreenPopGestureRecognizer.delegate = _popGestureRecognizerDelegate;
-    
-    // Add the full screen gesture recognizer.
-    [self.view addGestureRecognizer:_fullScreenPopGestureRecognizer];
-    
-    // Disable system interactive gesture recognizer.
-    self.interactivePopGestureRecognizer.enabled = NO;
-    
-    // Default hidden the navigation bar.
-    if (!_useSystemNavigationBar) {
-        [super setNavigationBarHidden:YES animated:NO];
-    }
-    
-    // Reset delegate to proxy.
-    self.proxy = [[SQNavigationControllerProxy alloc] initWithDelegate:nil];
-    super.delegate = _proxy;
-    
-    if (@available(iOS 11.0, *)) {
-        self.additionalSafeAreaInsets = UIEdgeInsetsMake(-(iPhoneX ? 44 : 20), 0, 0, 0);
-    }
-}
-
-#pragma mark - Override
-
-// Intercept the delegate methods.
-- (void)setDelegate:(id<UINavigationControllerDelegate>)delegate {
-    // The delegate caches whether the delegate responds to some of the delegate
-    // methods, so we need to force it to re-evaluate if the delegate responds to them
-    super.delegate = nil;
-    
-    self.proxy = [[SQNavigationControllerProxy alloc] initWithDelegate:delegate];
-    super.delegate = self.proxy;
-}
-
-// Override the method to handle the navigation bar of current viewcontroller.
-- (void)setNavigationBarHidden:(BOOL)navigationBarHidden {
-    if (_useSystemNavigationBar) {
-        [super setNavigationBarHidden:navigationBarHidden];
-    }else {
-        [self.lastestViewControllerCalledNavigationController setNavigationBarHidden:navigationBarHidden];
-    }
-}
-
-- (void)setNavigationBarHidden:(BOOL)hidden animated:(BOOL)animated {
-    if (_useSystemNavigationBar) {
-        [super setNavigationBarHidden:hidden animated:animated];
-    }else {
-        [self.lastestViewControllerCalledNavigationController setNavigationBarHidden:hidden animated:animated];
-    }
-}
-
-- (void)pushViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    // Replace the navigationItem of this viewController.
-    [viewController replaceNavigationItem];
-    
-    // Push the view controller.
-    [super pushViewController:viewController animated:animated];
-    
-    // Add the custom navigation bar after push action.
-    [viewController.view addSubview:viewController.navigationBar];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
-
-@end
 
 
 
@@ -363,12 +474,10 @@ static inline void SQSwizzleMethodUsingBlock(Class class, SEL originalSelector, 
 
 @implementation UIViewController (SQNavigationControllerSwizzle)
 
-+ (void)swizzleMethods {
++ (void)sq_swizzleMethods {
     // swizzle layout for change the layer of navigation bar.
     SQSwizzleMethodUsingBlock([self class], @selector(viewWillLayoutSubviews), NO, ^(id receiver, id result) {
-        if (receiver) {
-            [receiver sq_viewWillLayoutSubviews];
-        }
+        [receiver sq_viewWillLayoutSubviews];
     });
     
     // swizzle `navigationController` to add refence the current view controller receiver.
@@ -377,18 +486,6 @@ static inline void SQSwizzleMethodUsingBlock(Class class, SEL originalSelector, 
             [result setLastestViewControllerCalledNavigationController:receiver];
         }
     });
-}
-
-static inline NSArray <Class>*SQNavigationBarBlackList() {
-    static dispatch_once_t onceToken;
-    static NSArray <Class>*blackList;
-    dispatch_once(&onceToken, ^{
-        blackList = @[[UINavigationController class],
-                      [UITableViewController class],
-                      [UITabBarController class],
-                      ];
-    });
-    return blackList;
 }
 
 - (void)sq_viewWillLayoutSubviews {

@@ -50,6 +50,9 @@
 
 // Replace the system navigationItem to custom.
 - (void)replaceNavigationItem {
+    if ([self.navigationItem isKindOfClass:[SQNavigationItem class]]) {
+        return;
+    }
     SQNavigationItem *navigationItem = [[SQNavigationItem alloc] initWithTitle:self.title];
     navigationItem.viewController = self;
     [self setValue:navigationItem forKey:@"navigationItem"];

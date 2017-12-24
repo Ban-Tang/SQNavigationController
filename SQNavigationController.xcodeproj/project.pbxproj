@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1D8B563684330D5398590AD3 /* libPods-SQNavigationController.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AD380E1A8603EF1584F8543B /* libPods-SQNavigationController.a */; };
+		7D4360A21FEB7EC90066BAFD /* SQAppearanceProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D4360A11FEB7EC90066BAFD /* SQAppearanceProxy.m */; };
 		7DFE5A9E1FEA706B00848657 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DFE5A8B1FEA706B00848657 /* AppDelegate.m */; };
 		7DFE5A9F1FEA706B00848657 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7DFE5A8C1FEA706B00848657 /* Assets.xcassets */; };
 		7DFE5AA01FEA706B00848657 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7DFE5A8D1FEA706B00848657 /* LaunchScreen.storyboard */; };
@@ -25,7 +26,10 @@
 /* Begin PBXFileReference section */
 		2A2D69ACC70039862C5A4A52 /* Pods-SQNavigationController.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SQNavigationController.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SQNavigationController/Pods-SQNavigationController.debug.xcconfig"; sourceTree = "<group>"; };
 		5686B2AC2EAFBE4FFA2C03D7 /* Pods-SQNavigationController.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SQNavigationController.release.xcconfig"; path = "Pods/Target Support Files/Pods-SQNavigationController/Pods-SQNavigationController.release.xcconfig"; sourceTree = "<group>"; };
+		7D4360A01FEB7EC90066BAFD /* SQAppearanceProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQAppearanceProxy.h; sourceTree = "<group>"; };
+		7D4360A11FEB7EC90066BAFD /* SQAppearanceProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SQAppearanceProxy.m; sourceTree = "<group>"; };
 		7DC094061FDE2EAB00A5631D /* SQNavigationController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SQNavigationController.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7DC50A981FEFB432006374B2 /* UIViewController-NavigationBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "UIViewController-NavigationBar.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DFE5A8A1FEA706B00848657 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7DFE5A8B1FEA706B00848657 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7DFE5A8C1FEA706B00848657 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -56,6 +60,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7DC50A951FEFB432006374B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -83,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				7DC094061FDE2EAB00A5631D /* SQNavigationController.app */,
+				7DC50A981FEFB432006374B2 /* UIViewController-NavigationBar.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,6 +123,8 @@
 				7DFE5AAB1FEA70D300848657 /* SQNavigationBar.m */,
 				7DFE5AAE1FEA70D300848657 /* SQNavigationItem.h */,
 				7DFE5AAF1FEA70D300848657 /* SQNavigationItem.m */,
+				7D4360A01FEB7EC90066BAFD /* SQAppearanceProxy.h */,
+				7D4360A11FEB7EC90066BAFD /* SQAppearanceProxy.m */,
 			);
 			path = SQNavigationController;
 			sourceTree = "<group>";
@@ -158,6 +172,23 @@
 			productReference = 7DC094061FDE2EAB00A5631D /* SQNavigationController.app */;
 			productType = "com.apple.product-type.application";
 		};
+		7DC50A971FEFB432006374B2 /* UIViewController-NavigationBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7DC50AAD1FEFB432006374B2 /* Build configuration list for PBXNativeTarget "UIViewController-NavigationBar" */;
+			buildPhases = (
+				7DC50A941FEFB432006374B2 /* Sources */,
+				7DC50A951FEFB432006374B2 /* Frameworks */,
+				7DC50A961FEFB432006374B2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "UIViewController-NavigationBar";
+			productName = "UIViewController-NavigationBar";
+			productReference = 7DC50A981FEFB432006374B2 /* UIViewController-NavigationBar.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -168,6 +199,10 @@
 				ORGANIZATIONNAME = bantang;
 				TargetAttributes = {
 					7DC094051FDE2EAB00A5631D = {
+						CreatedOnToolsVersion = 9.1;
+						ProvisioningStyle = Automatic;
+					};
+					7DC50A971FEFB432006374B2 = {
 						CreatedOnToolsVersion = 9.1;
 						ProvisioningStyle = Automatic;
 					};
@@ -187,6 +222,7 @@
 			projectRoot = "";
 			targets = (
 				7DC094051FDE2EAB00A5631D /* SQNavigationController */,
+				7DC50A971FEFB432006374B2 /* UIViewController-NavigationBar */,
 			);
 		};
 /* End PBXProject section */
@@ -201,6 +237,13 @@
 				7DFE5AA11FEA706B00848657 /* Main.storyboard in Resources */,
 				7DFE5A9F1FEA706B00848657 /* Assets.xcassets in Resources */,
 				7DFE5AA01FEA706B00848657 /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7DC50A961FEFB432006374B2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -231,9 +274,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-SQNavigationController/Pods-SQNavigationController-frameworks.sh",
+				"${PODS_ROOT}/Reveal-SDK/RevealServer-11/iOS/RevealServer.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RevealServer.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -266,9 +312,17 @@
 				7DFE5AB01FEA70D300848657 /* SQNavigationBar.m in Sources */,
 				7DFE5AA81FEA706B00848657 /* SecondViewController.m in Sources */,
 				7DFE5AB21FEA70D300848657 /* SQNavigationItem.m in Sources */,
+				7D4360A21FEB7EC90066BAFD /* SQAppearanceProxy.m in Sources */,
 				7DFE5AB11FEA70D300848657 /* SQNavigationController.m in Sources */,
 				7DFE5A9E1FEA706B00848657 /* AppDelegate.m in Sources */,
 				7DFE5AA71FEA706B00848657 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7DC50A941FEFB432006374B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,6 +484,34 @@
 			};
 			name = Release;
 		};
+		7DC50AAB1FEFB432006374B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 865L62UDE9;
+				INFOPLIST_FILE = "UIViewController-NavigationBar/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jzyd.UIViewController-NavigationBar";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		7DC50AAC1FEFB432006374B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 865L62UDE9;
+				INFOPLIST_FILE = "UIViewController-NavigationBar/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jzyd.UIViewController-NavigationBar";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -447,6 +529,15 @@
 			buildConfigurations = (
 				7DC0941D1FDE2EAB00A5631D /* Debug */,
 				7DC0941E1FDE2EAB00A5631D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7DC50AAD1FEFB432006374B2 /* Build configuration list for PBXNativeTarget "UIViewController-NavigationBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7DC50AAB1FEFB432006374B2 /* Debug */,
+				7DC50AAC1FEFB432006374B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

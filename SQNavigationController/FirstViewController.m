@@ -7,6 +7,7 @@
 //
 
 #import "FirstViewController.h"
+#import "SQNavigationBar.h"
 
 @interface FirstViewController ()<UITableViewDataSource>
 
@@ -23,6 +24,12 @@
     self.title = @"首页";
     _tableView.backgroundColor = [UIColor colorWithRed:235.0 / 255 green:235.0 / 255 blue:235.0 / 255 alpha:1];
     _tableView.tableFooterView = [UIView new];
+    
+    self.navigationBar.leftBarButtonItemPaddingInset = 5;
+}
+
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
