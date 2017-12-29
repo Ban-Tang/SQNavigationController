@@ -14,7 +14,7 @@ end
 
 target 'UIViewController-NavigationBar' do
     
-    pod 'SQNavigationController', :git => 'https://git.coding.net/roylee/SQNavigationController.git', :tag => '0.1'
+    pod 'SQNavigationController', :git => 'https://git.coding.net/roylee/SQNavigationController.git', :tag => '0.1.1'
     
     # Reveal
     pod 'Reveal-SDK', '~> 11'
