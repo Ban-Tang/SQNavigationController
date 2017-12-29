@@ -1,25 +1,12 @@
 PODS:
   - Reveal-SDK (11)
-  - SQNavigationController (0.1)
 
 DEPENDENCIES:
   - Reveal-SDK (~> 11)
-  - SQNavigationController (from `https://git.coding.net/roylee/SQNavigationController.git`, tag `0.1`)
-
-EXTERNAL SOURCES:
-  SQNavigationController:
-    :git: https://git.coding.net/roylee/SQNavigationController.git
-    :tag: 0.1
-
-CHECKOUT OPTIONS:
-  SQNavigationController:
-    :git: https://git.coding.net/roylee/SQNavigationController.git
-    :tag: 0.1
 
 SPEC CHECKSUMS:
   Reveal-SDK: 7fa13d04bb55db61ff2342a990cf731d5159361d
-  SQNavigationController: 5225788b51dda103512ba9230509b4061f270e69
 
-PODFILE CHECKSUM: 2958e7ce4adcb467ab28f95f52530b404a166f5a
+PODFILE CHECKSUM: 176cf56eed49192b7eb6ee05ed749988312f8055
 
 COCOAPODS: 1.3.1

@@ -203,6 +203,7 @@ static inline NSArray <Class>*SQNavigationBarBlackList() {
     }
     
     if (@available(iOS 11.0, *)) {
+        BOOL iPhoneX = [UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO;
         self.additionalSafeAreaInsets = UIEdgeInsetsMake(-(iPhoneX ? 44 : 20), 0, 0, 0);
     }
 }

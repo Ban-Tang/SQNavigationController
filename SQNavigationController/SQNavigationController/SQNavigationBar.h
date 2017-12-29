@@ -117,28 +117,3 @@ UIKIT_EXTERN CGFloat const kBarButtonItemLineSpacing;
 
 @end
 
-
-
-///=============================================================================
-/// @name Utility Macro
-///=============================================================================
-
-#ifndef iPhoneX
-#define iPhoneX ([UIScreen instancesRespondToSelector:@selector(currentMode)] ? CGSizeEqualToSize(CGSizeMake(1125, 2436), [[UIScreen mainScreen] currentMode].size) : NO)
-#endif
-
-#ifndef kStatusBarHeight
-#define kStatusBarHeight  (iPhoneX ? 44 : 20)
-#endif
-
-#ifndef kNavigationHeight
-#define kNavigationHeight (kStatusBarHeight + 44)
-#endif
-
-#ifndef kScreenWidth
-#define kScreenWidth  [UIScreen mainScreen].bounds.size.width
-#endif
-
-#ifndef kScreenHeight
-#define kScreenHeight [UIScreen mainScreen].bounds.size.height
-#endif

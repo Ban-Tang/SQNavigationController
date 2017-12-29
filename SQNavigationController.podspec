@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SQNavigationController"
-  s.version      = "0.1.1"
+  s.version      = "0.1.2"
   s.summary      = "A full screen pop gesture navigaiton controller"
   s.homepage     = "https://coding.net/u/roylee/p/SQNavigationController"
 
@@ -31,10 +31,8 @@ Pod::Spec.new do |s|
     :tag => "#{s.version}" 
   }
   s.source_files  = "SQNavigationController/SQNavigationController/**/*.{h,m}"
-s.public_header_files = "SQNavigationController/SQNavigationController/SQNavigation{Controller,Bar}.h"
+  s.public_header_files = "SQNavigationController/SQNavigationController/SQNavigation{Controller,Bar}.h"
 
   s.requires_arc = true
-
-  # s.dependency 'SQKit', :git => 'https://git.coding.net/roylee/SQKit.git', :tag => '1.0'
 
 end
