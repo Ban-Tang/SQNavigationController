@@ -34,6 +34,13 @@ typedef NS_ENUM(NSInteger, SQBarButtonPosition) {
 @property (nonatomic, assign) CGFloat navigationBarElementsAlpha;
 
 
+
+#pragma mark - Other Property
+
+/// Config background image for the navigaiton bar. Default is nil.
+@property (nonatomic, strong ) UIImage *navigationBarBackgroundImage;
+
+
 #pragma mark - Bar Buttons
 ///=============================================================================
 /// @name Bar Buttons
@@ -45,7 +52,7 @@ typedef NS_ENUM(NSInteger, SQBarButtonPosition) {
 /// @param image        The image for the button
 /// @param title        Title of the bar button, if both have image & title, the title will be
 ///                     at the right of the image.
-/// @param action       A custom action when click the bar button.
+/// @param action       A custom action when click the bar button, default target is self.
 /// @param offset       Layout offset for this bar button, if the value is more than 0, the bar button
 ///                     will be adjust to center of its navigaiton bar.
 - (void)setBarButtonAtPosition:(SQBarButtonPosition)position withImage:(UIImage *)image title:(NSString *)title action:(SEL)action margin:(CGFloat)offset;

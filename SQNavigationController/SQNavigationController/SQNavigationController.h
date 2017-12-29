@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/// SQNavigationController build identify.
+#define SQNAVIGATION
+
 @interface SQNavigationController : UINavigationController
 
 /// A full screen pan gesturerecognizer instead of the system's interactivePopGestureRecognizer.

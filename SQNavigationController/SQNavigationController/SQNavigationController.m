@@ -217,6 +217,8 @@ static inline NSArray <Class>*SQNavigationBarBlackList() {
         // The delegate caches whether the delegate responds to some of the delegate
         // methods, so we need to force it to re-evaluate if the delegate responds to them
         super.delegate = nil;
+        self.proxy = nil;
+        if (!delegate) return;
         
         self.proxy = [[SQNavigationControllerProxy alloc] initWithDelegate:delegate];
         super.delegate = self.proxy;
