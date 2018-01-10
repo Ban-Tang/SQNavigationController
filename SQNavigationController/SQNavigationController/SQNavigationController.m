@@ -408,10 +408,6 @@ static inline NSArray <Class>*SQNavigationBarBlackList() {
 - (void)navigationController:(SQNavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     NSAssert(![viewController isKindOfClass:[UITableViewController class]], @"SQNavigationController does not support UITableViewController.");
     
-    // Disable scroll view inset adjust.
-    viewController.edgesForExtendedLayout = UIRectEdgeNone;
-    viewController.automaticallyAdjustsScrollViewInsets = NO;
-    
     // Add a back bar button item for root view controller, cause the push method will
     // not be invoked when create the navigation controller by nib.
     if (!viewController.navigationItem.backBarButtonItem) {
