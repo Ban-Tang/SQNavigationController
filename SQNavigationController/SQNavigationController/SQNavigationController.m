@@ -208,6 +208,24 @@ static inline NSArray <Class>*SQNavigationBarBlackList() {
     }
 }
 
+- (void)setDisableFullScreenPopGestureRecognizer:(BOOL)disableFullScreenPopGestureRecognizer {
+    if (_disableFullScreenPopGestureRecognizer == disableFullScreenPopGestureRecognizer) {
+        return;
+    }
+    _disableFullScreenPopGestureRecognizer = disableFullScreenPopGestureRecognizer;
+    
+    if (_disableFullScreenPopGestureRecognizer) {
+        // Remove the full screen gesture recognizer.
+        [self.view removeGestureRecognizer:_fullScreenPopGestureRecognizer];
+    }else {
+        // Add the full screen gesture recognizer.
+        [self.view addGestureRecognizer:_fullScreenPopGestureRecognizer];
+    }
+    
+    // Change system interactive gesture recognizer state.
+    self.interactivePopGestureRecognizer.enabled = _disableFullScreenPopGestureRecognizer;
+}
+
 #pragma mark - Override
 
 // Intercept the delegate methods.
@@ -407,6 +425,10 @@ static inline NSArray <Class>*SQNavigationBarBlackList() {
 
 - (void)navigationController:(SQNavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
     NSAssert(![viewController isKindOfClass:[UITableViewController class]], @"SQNavigationController does not support UITableViewController.");
+    
+    // Disable scroll view inset adjust.
+    viewController.edgesForExtendedLayout = UIRectEdgeNone;
+    viewController.automaticallyAdjustsScrollViewInsets = NO;
     
     // Add a back bar button item for root view controller, cause the push method will
     // not be invoked when create the navigation controller by nib.

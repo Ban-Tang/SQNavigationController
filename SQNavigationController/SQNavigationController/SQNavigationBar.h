@@ -73,6 +73,9 @@ UIKIT_EXTERN CGFloat const kBarButtonItemLineSpacing;
 /// Line spacing between two bar button, default is kBarButtonItemLineSpacing.
 @property (nonatomic, assign) CGFloat barButtonItemLineSpacing UI_APPEARANCE_SELECTOR;
 
+/// Font of the bar buttons, default is system font size 14.
+@property (nonatomic, strong) UIFont *barButtonItemTitleFont UI_APPEARANCE_SELECTOR;
+
 @end
 
 

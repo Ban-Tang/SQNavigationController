@@ -8,9 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-/// SQNavigationController build identify.
-#define SQNAVIGATION
-
 @interface SQNavigationController : UINavigationController
 
 /// A full screen pan gesturerecognizer instead of the system's interactivePopGestureRecognizer.
@@ -20,13 +17,20 @@
 ///
 /// If is YES, the property `interactivePopDisabled` of viewcontroller will not effect. It
 /// is whole effect of the navigation controller.
+///
+/// Note that, if the value is NO, the system edge pop gesture also not effect.
 @property (nonatomic, assign) BOOL interactivePopDisabled;
 
 /// Indicate whether use system `UINavigationBar` or not. If not every view controller
-/// will be added a custom navigation bar.
+/// will be added a custom navigation bar of class `SQNavigationBar`.
 /// 
 /// Default is NO.
 @property (nonatomic, assign) BOOL useSystemNavigationBar;
+
+/// Disable the full screen pop gesture, means that the system edge pop gesture will be effect.
+///
+/// Default is NO.
+@property (nonatomic, assign) BOOL disableFullScreenPopGestureRecognizer;
 
 
 #pragma mark - Appearance Property

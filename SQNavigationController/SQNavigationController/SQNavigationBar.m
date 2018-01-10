@@ -42,8 +42,9 @@ CGFloat const kBarButtonItemEdgeInset = 8;
 CGFloat const kNavigationBarButtonPadding = 8;
 CGFloat const kBarButtonItemLineSpacing = 5;
 
-@interface SQNavigationBar ()
-
+@interface SQNavigationBar () {
+    CGFloat _titleNormalWidth;
+}
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) NSMutableArray <UIView *>*leftViews;
 @property (nonatomic, strong) NSMutableArray <UIView *>*rightViews;
@@ -79,6 +80,7 @@ CGFloat const kBarButtonItemLineSpacing = 5;
     _leftBarButtonItemPaddingInset = kNavigationBarButtonPadding;
     _rightBarButtonItemPaddingInset = kNavigationBarButtonPadding;
     _barButtonItemLineSpacing = kBarButtonItemLineSpacing;
+    _barButtonItemTitleFont = [UIFont systemFontOfSize:14];
 }
 
 - (void)setupViews {
@@ -110,11 +112,11 @@ CGFloat const kBarButtonItemLineSpacing = 5;
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    // layout title.
-    [self layoutTitleView];
-    
     // layout bar button items.
     [self layoutBarButtonItems];
+    
+    // layout title.
+    [self layoutTitleView];
     
     // layout bottom line.
     [self layoutBottomLine];
@@ -133,6 +135,7 @@ CGFloat const kBarButtonItemLineSpacing = 5;
         frame.origin.x   = left;
     }else {
         // horizontal center.
+        frame.size.width = _titleNormalWidth;
         frame.origin.x = (CGRectGetWidth(self.bounds) - CGRectGetWidth(frame)) / 2;
     }
     _titleLabel.frame = frame;
@@ -169,27 +172,26 @@ CGFloat const kBarButtonItemLineSpacing = 5;
         UIView *itemView = [_leftViews firstObject];
         CGRect frame = itemView.frame;
         frame.origin.x = itemLeft + _leftBarButtonItem.layoutMargin;
-        NSLog(@"left margin is %.f", _leftBarButtonItem.layoutMargin);
         itemView.frame = frame;
     }
 }
 
 - (void)layoutRightBarButtonItems {
     __block CGFloat itemRight = CGRectGetWidth(self.bounds) - _rightBarButtonItemPaddingInset;
-    __block NSInteger index = _rightViews.count - 1;
-    [_rightBarButtonItems enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    __block NSInteger skipIndex = 0;
+    [_rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         // It is a adjust item (UIBarButtonSystemItemFixedSpace), if the width is not 0.
         if (obj.width != 0) {
             itemRight -= obj.width;
+            skipIndex ++;
         }
         // Normal item.
         else {
-            UIView *itemView = _rightViews[index];
+            UIView *itemView = _rightViews[idx - skipIndex];
             CGRect frame = itemView.frame;
             frame.origin.x = itemRight + obj.layoutMargin - CGRectGetWidth(frame);
             itemView.frame = frame;
             itemRight = CGRectGetMinX(frame) - _barButtonItemLineSpacing;
-            index --;
         }
     }];
     
@@ -218,6 +220,7 @@ CGFloat const kBarButtonItemLineSpacing = 5;
                                              attributes:_titleTextAttributes
                                                 context:nil].size.width);
     _titleLabel.frame = frame;
+    _titleNormalWidth = CGRectGetWidth(frame);
     [self layoutTitleView];
 }
 
@@ -281,6 +284,16 @@ CGFloat const kBarButtonItemLineSpacing = 5;
     }];
     [_rightViews enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         [(UIButton *)obj setTitleColor:_tintColor forState:UIControlStateNormal];
+    }];
+}
+
+- (void)setBarButtonItemTitleFont:(UIFont *)barButtonItemTitleFont {
+    _barButtonItemTitleFont = barButtonItemTitleFont;
+    [_leftViews enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [[(UIButton *)obj titleLabel] setFont:barButtonItemTitleFont];
+    }];
+    [_rightViews enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [[(UIButton *)obj titleLabel] setFont:barButtonItemTitleFont];
     }];
 }
 
@@ -373,7 +386,8 @@ CGFloat const kBarButtonItemLineSpacing = 5;
     
     [_rightViews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_rightViews removeAllObjects];
-    [_rightBarButtonItems enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    // just normal sort, not use NSEnumerationReverse option.
+    [_rightBarButtonItems enumerateObjectsUsingBlock:^(UIBarButtonItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         // It is a adjust item, if the width is not 0.
         if (obj.width != 0) {
             right -= obj.width;
@@ -386,7 +400,7 @@ CGFloat const kBarButtonItemLineSpacing = 5;
             itemView.frame = frame;
             
             [self addSubview:itemView];
-            [_rightViews insertObject:itemView atIndex:0];
+            [_rightViews addObject:itemView];
             
             right = CGRectGetMinX(frame) - _barButtonItemLineSpacing;
         }
@@ -408,7 +422,7 @@ CGFloat const kBarButtonItemLineSpacing = 5;
     }
     
     UIButton *itemView = [UIButton buttonWithType:UIButtonTypeCustom];
-    itemView.titleLabel.font = [UIFont systemFontOfSize:14];
+    itemView.titleLabel.font = _barButtonItemTitleFont;
     if (item.title && item.image) {
         itemView.titleEdgeInsets = UIEdgeInsetsMake(0, item.titleImageInset, 0, 0);
         itemView.imageEdgeInsets = UIEdgeInsetsMake(0, 0, 0, item.titleImageInset);
@@ -419,7 +433,7 @@ CGFloat const kBarButtonItemLineSpacing = 5;
     [itemView setImage:item.image forState:UIControlStateHighlighted];
     [itemView sizeToFit];
     CGFloat width = CGRectGetWidth(itemView.frame) + ((item.title && item.image) ? item.titleImageInset : 0 + 2 *item.itemEdgeInset);
-    [itemView setFrame:CGRectMake(0, kStatusBarHeight, width, kNavigationBarHeight)];
+    [itemView setFrame:CGRectMake(0, kStatusBarHeight - 1, width, kNavigationBarHeight)]; // system bar button is offset 1 point.
     [itemView addTarget:item.target action:item.action forControlEvents:UIControlEventTouchUpInside];
     return itemView;
 }
@@ -459,11 +473,11 @@ CGFloat const kBarButtonItemLineSpacing = 5;
 - (void)setBarButtonsAlpha:(CGFloat)alpha {
     [self willChangeValueForKey:@"_barButtonsAlpha"];
     objc_setAssociatedObject(self, @selector(barButtonsAlpha), @(alpha), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [[self valueForKey:@"_leftViews"] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger i, BOOL *stop) {
+    [_leftViews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger i, BOOL *stop) {
         view.alpha = alpha;
     }];
     
-    [[self valueForKey:@"_rightViews"] enumerateObjectsUsingBlock:^(UIView *view, NSUInteger i, BOOL *stop) {
+    [_rightViews enumerateObjectsUsingBlock:^(UIView *view, NSUInteger i, BOOL *stop) {
         view.alpha = alpha;
     }];
     [self didChangeValueForKey:@"_barButtonsAlpha"];
