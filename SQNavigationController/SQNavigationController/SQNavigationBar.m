@@ -594,7 +594,7 @@ CGFloat const kBarButtonItemLineSpacing = 5;
     SQNavigationBar *navigationBar = objc_getAssociatedObject(self, _cmd);
     if (navigationBar == nil) {
         navigationBar = [SQNavigationBar navigationBar];
-        navigationBar.title = self.title;
+        navigationBar.title = self.navigationItem.title;
         navigationBar.titleView = self.navigationItem.titleView;
         if (self.navigationItem.leftBarButtonItem) {
             navigationBar.leftBarButtonItem = self.navigationItem.leftBarButtonItem;
