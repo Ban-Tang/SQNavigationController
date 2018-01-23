@@ -433,7 +433,8 @@ CGFloat const kBarButtonItemLineSpacing = 5;
     [itemView setImage:item.image forState:UIControlStateHighlighted];
     [itemView sizeToFit];
     CGFloat width = CGRectGetWidth(itemView.frame) + ((item.title && item.image) ? item.titleImageInset : 0 + 2 *item.itemEdgeInset);
-    [itemView setFrame:CGRectMake(0, kStatusBarHeight - 1, width, kNavigationBarHeight)]; // system bar button is offset 1 point.
+    CGFloat height = CGRectGetHeight(itemView.frame) + 2 *item.itemEdgeInset;
+    [itemView setFrame:CGRectMake(0, kStatusBarHeight + (kNavigationBarHeight - height) / 2, width, height)];
     [itemView addTarget:item.target action:item.action forControlEvents:UIControlEventTouchUpInside];
     return itemView;
 }

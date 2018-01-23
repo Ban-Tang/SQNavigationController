@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "SQNavigationController"
-  s.version      = "0.1.4"
+  s.version      = "0.1.5"
   s.summary      = "A full screen pop gesture navigaiton controller"
   s.homepage     = "https://coding.net/u/roylee/p/SQNavigationController"
 
