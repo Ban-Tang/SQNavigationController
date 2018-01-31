@@ -414,11 +414,13 @@ CGFloat const kBarButtonItemLineSpacing = 5;
 #pragma mark - Private
 
 - (UIView *)barItemViewFromBarButtonItem:(UIBarButtonItem *)item {
-    if (item.customView) {
-        return item.customView;
-    }
     if (!item) {
         return nil;
+    }
+    if (item.customView) {
+        CGRect frame = item.customView.frame;
+        frame.origin.y = kStatusBarHeight + (kNavigationBarHeight - CGRectGetHeight(frame)) / 2;
+        return item.customView;
     }
     
     UIButton *itemView = [UIButton buttonWithType:UIButtonTypeCustom];
