@@ -195,7 +195,7 @@ static inline NSArray <Class>*SQNavigationBarBlackList() {
     
     if (!_useSystemNavigationBar) {
         // Default hidden the navigation bar.
-        [super setNavigationBarHidden:YES animated:NO];
+        super.navigationBarHidden = YES;
         
         // Reset delegate to proxy.
         self.proxy = [[SQNavigationControllerProxy alloc] initWithDelegate:nil];
